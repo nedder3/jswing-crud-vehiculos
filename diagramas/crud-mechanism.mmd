@@ -14,21 +14,21 @@ graph LR
     end
 
     subgraph Persistence [In-Memory]
-        Memory[(ArrayList&lt;Automovil&gt;)]
+        Memory[(ArrayList<Automovil>)]
     end
 
     %% Flow: User Actions
-    MainApp --&gt;|inicia operacion| AutomovilService
-    AutomovilForm --&gt;|lee input/escribe estado| AutomovilService
+    MainApp -->|inicia operacion| AutomovilService
+    AutomovilForm -->|lee input/escribe estado| AutomovilService
     
     %% Flow: Service -> DAO
-    AutomovilService --&gt;|delega CRUD| AutomovilDao
+    AutomovilService -->|delega CRUD| AutomovilDao
     
     %% Flow: DAO -> Memory
-    AutomovilDao --&gt;|lee/escribe/actualiza| Memory
+    AutomovilDao -->|lee/escribe/actualiza| Memory
     
     %% Flow: Return path
-    Memory --&gt;|retorna datos| AutomovilDao
-    AutomovilDao --&gt;|retorna objeto/lista| AutomovilService
-    AutomovilService --&gt;|actualiza vista| MainApp
-    AutomovilService --&gt;|actualiza tabla| CatalogoPanel
+    Memory -->|retorna datos| AutomovilDao
+    AutomovilDao -->|retorna objeto/lista| AutomovilService
+    AutomovilService -->|actualiza vista| MainApp
+    AutomovilService -->|actualiza tabla| CatalogoPanel

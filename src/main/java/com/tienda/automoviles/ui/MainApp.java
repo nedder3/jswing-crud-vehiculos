@@ -72,7 +72,10 @@ public class MainApp extends JFrame {
         add(botones, BorderLayout.SOUTH);
 
         guardarBtn.addActionListener(e -> performGuardar());
-        limpiarBtn.addActionListener(e -> form.limpiar());
+        limpiarBtn.addActionListener(e -> {
+            form.limpiar();
+            JOptionPane.showMessageDialog(this, "Formulario reiniciado para nuevo registro.");
+        });
         eliminarBtn.addActionListener(e -> performEliminar());
     }
 
