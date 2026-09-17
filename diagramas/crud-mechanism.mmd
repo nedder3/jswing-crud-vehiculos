@@ -1,0 +1,34 @@
+graph LR
+    subgraph UI_Layer [User Interface]
+        MainApp[MainApp / Frame]
+        CatalogoPanel[CatalogoPanel / JTable]
+        AutomovilForm[AutomovilForm / Fields]
+    end
+
+    subgraph Service_Layer [Business Logic]
+        AutomovilService[AutomovilService]
+    end
+
+    subgraph Data_Layer [Data Access]
+        AutomovilDao[AutomovilDao]
+    end
+
+    subgraph Persistence [In-Memory]
+        Memory[(ArrayList&lt;Automovil&gt;)]
+    end
+
+    %% Flow: User Actions
+    MainApp --&gt;|inicia operacion| AutomovilService
+    AutomovilForm --&gt;|lee input/escribe estado| AutomovilService
+    
+    %% Flow: Service -> DAO
+    AutomovilService --&gt;|delega CRUD| AutomovilDao
+    
+    %% Flow: DAO -> Memory
+    AutomovilDao --&gt;|lee/escribe/actualiza| Memory
+    
+    %% Flow: Return path
+    Memory --&gt;|retorna datos| AutomovilDao
+    AutomovilDao --&gt;|retorna objeto/lista| AutomovilService
+    AutomovilService --&gt;|actualiza vista| MainApp
+    AutomovilService --&gt;|actualiza tabla| CatalogoPanel
