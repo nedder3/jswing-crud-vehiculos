@@ -1,22 +1,16 @@
-# <project-name>
+# JSwing CRUD Vehículos
 
 <!-- Optional logo/banner: place it in docs/assets/ and reference it here (supports light/dark on GitHub). -->
-<!-- <p align="center"><img src="docs/assets/banner.png" alt="<project>" width="720"/></p> -->
+<!-- <p align="center"><img src="docs/assets/banner.png" alt="JSwing CRUD Vehículos" width="720"/></p> -->
 
-<!-- BADGES: keep minimal and real. Generate at https://shields.io.
-     Group 1: project status. Group 2: technology (one per relevant stack). -->
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
-[![version](https://img.shields.io/badge/version-0.1.0-blue.svg?style=flat-square)](https://github.com/<user>/<repo>/releases)
-[![CI](https://img.shields.io/badge/CI-passing-brightgreen.svg?style=flat-square)](https://github.com/<user>/<repo>/actions)
-[![deploy](https://img.shields.io/badge/deploy-GitHub%20Pages-2ea44f?style=flat-square)](https://<user>.github.io/<repo>/)
+[![version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=flat-square)](https://github.com/nedder3/jswing-crud-vehiculos/releases)
+[![language](https://img.shields.io/badge/language-Java%2017-ffca28.svg?style=flat-square)]()
+[![framework](https://img.shields.io/badge/framework-Swing-000000.svg?style=flat-square)]()
+[![build](https://img.shields.io/badge/build-Maven-ffca28.svg?style=flat-square)]()
 
-<!-- Technology badges (uncomment/adjust to the project's real stack). -->
-<!-- [![language](https://img.shields.io/badge/language-JavaScript-ffca28.svg?style=flat-square)]() -->
-<!-- [![runtime](https://img.shields.io/badge/runtime-Node.js%2018%2B-339933.svg?style=flat-square)]() -->
-<!-- [![framework](https://img.shields.io/badge/framework-Vanilla%20ESM-000000.svg?style=flat-square)]() -->
-
-> A sentence summarizing what it does and why it exists.
+> Aplicación de escritorio para gestión de vehículos con interfaz Swing, persistencia en memoria y arquitectura layered.
 
 ## Table of contents
 
@@ -27,64 +21,70 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Architecture and diagrams](#architecture-and-diagrams)
-- [Configuration](#configuration)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Background
 
-What problem does it solve? Why this implementation and not another? Context and
-design decisions. If it competes with or is an alternative to another project, a
-short comparison table helps:
-
-| Capability | This project | Alternative |
-|---|:---:|:---:|
-| Key requirement A | Yes | No |
-| Key requirement B | Yes | Yes |
+Sistema de gestión de vehículos para demostración de arquitectura layered en Java Swing. Implementa un CRUD completo con interfaz gráfica, persistencia en memoria y pruebas unitarias.
 
 ## Features
 
-- **Feature 1:** describe the concrete capability and use case.
-- **Feature 2:** ...
-- **Feature 3:** ...
+- **Interfaz gráfica:** Tabla de vehículos con formulario de edición
+- **Persistencia:** Almacenamiento en memoria con ArrayList
+- **Arquitectura:** Layered (Model/DAO/Service/UI)
+- **Pruebas:** TDD con JUnit
 
 ## Tech stack
 
 | Layer | Technology | Notes |
 |------|-----------|-------|
-| Language | JavaScript (ESM) | Native browser modules |
-| Runtime | Node.js 18+ | Dev server only |
-| Framework | Vanilla / no build | GitHub Pages serves static |
-| Tests | Vitest | TDD |
-| Deploy | GitHub Pages | No backend |
+| Language | Java 17 | LTS |
+| Framework | Swing | Desktop UI |
+| Build | Maven | Dependency management |
+| Tests | JUnit 5 | TDD |
 
 ## Quick Start
 
-The minimum to see it working (happy path, no long explanation):
-
 ```bash
-git clone https://github.com/<user>/<repo>.git
-cd <repo>
-# Open index.html directly or serve statically:
-python -m http.server 8000
-# Then open http://localhost:8000
+# Clone the repository
+git clone git@github.com:nedder3/jswing-crud-vehiculos.git
+cd jswing-crud-vehiculos
+
+# Build and run
+mvn clean package
+java -jar target/jswing-crud-vehiculos-1.0.0.jar
 ```
 
 ## Installation
 
-Detailed setup steps (dependencies, build if applicable):
 ```bash
-npm install
-npm run dev
+# Prerequisites
+- Java 17
+- Maven 3.9.9
+
+# Build
+mvn clean package
 ```
 
 ## Usage
 
-How to use the prototype from the browser or the API. Concrete, working examples:
-```js
-// minimal example
-import { algo } from './src/algo.js';
-algo();
+```java
+// Ejemplo de uso del DAO
+AutomovilDao dao = new AutomovilDao();
+Automovil auto = new Automovil("Toyota", "Corolla", "1.8L", "Blanco", "ABC123", 4);
+// Crear
+Automovil creado = dao.crear(auto);
+
+// Leer
+List<Automovil> todos = dao.leerTodos();
+
+// Actualizar
+creado.setModelo("Camry");
+dao.actualizar(creado);
+
+// Eliminar
+dao.eliminar(creado.getId());
 ```
 
 ## Architecture and diagrams
@@ -97,40 +97,45 @@ Directory tree:
 
 ```text
 src/
-  core/         storage + registry (infra base)
-  services/     per-service logic
-  ui/           shell + views
-index.html      entry point
-docs/           design + tutorial
+  main/
+    java/
+      com/
+        tienda/
+          automoviles/
+            model/        # Entidades
+            dao/          # Acceso a datos
+            service/      # Lógica de negocio
+            ui/           # Interfaz gráfica
+  test/
+    java/
+      com/
+        tienda/
+          automoviles/
+            dao/          # Pruebas del DAO
 ```
 
 ```mermaid
 flowchart TD
-  U[User] -->|acts on| SHELL[UI shell with tabs]
-  SHELL -->|registry.list()| REG[ServiceRegistry: single source]
-  REG -->|registry.create| SVC[Services: pure logic]
-  SVC -->|reads/writes| AD[StorageAdapter]
-  AD -->|runtime| LS[(localStorage)]
+  U[User] -->|acts on| SHELL[MainApp / Frame]
+  SHELL -->|inicia operacion| AutomovilService
+  AutomovilForm -->|lee input/escribe estado| AutomovilService
+  AutomovilService -->|delega CRUD| AutomovilDao
+  AutomovilDao -->|lee/escribe/actualiza| Memory[(ArrayList<Automovil>)]
+  Memory -->|retorna datos| AutomovilDao
+  AutomovilDao -->|retorna objeto/lista| AutomovilService
+  AutomovilService -->|actualiza vista| MainApp
+  AutomovilService -->|actualiza tabla| CatalogoPanel
 ```
-
-## Configuration
-
-Environment variables / flags (if applicable). Keep the table even if minimal:
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `5173` | Dev server port |
-| `MODE` | `memory` | Persistence mode |
 
 ## Contributing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md). Key rules:
-- Conversational commits with scope: `feat(proy): ...`, `fix(proy): ...`, `docs(proy): ...`
+- Conversational commits with scope: `feat(jswing): ...`, `fix(jswing): ...`, `docs(jswing): ...`
 - TDD: tests before declaring done.
-- JSDoc/TSDoc on every public symbol.
+- JSDoc on every public symbol.
 
 See [CHANGELOG.md](CHANGELOG.md) for the change history.
 
 ## License
 
-[MIT](LICENSE) © <author>
+[MIT](LICENSE) © Ariel Jaime
